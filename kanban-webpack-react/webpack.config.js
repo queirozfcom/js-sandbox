@@ -30,12 +30,29 @@ const common = {
     path: PATHS.build,
     filename: 'bundle.js'
   },
+  resolve:{
+    extensions: ['','.js','.jsx']
+  },
   module:{
     loaders:[
       {
         test: /\.css$/,
         loaders: ['style', 'css'],
         include: PATHS.app
+      },
+      {
+        test: /\.jsx?$/,
+        loader: 'babel',
+        include: PATHS.app,
+        exclude: /node_modules/,
+        query: {
+          cacheDirectory: true,
+          presets: [
+            "es2015",
+            "react",
+            "survivejs-kanban"
+          ]
+        }        
       }
     ]
   }
@@ -58,7 +75,12 @@ if(TARGET === 'start' || !TARGET) {
       new webpack.HotModuleReplacementPlugin()
     ]
   });
+
+  module.exports.module.loaders[1].query.presets.unshift("react-hmre");
+
 }
+
+console.log(JSON.stringify(module.exports, null, 2));
 
 if(TARGET === 'build') {
   module.exports = merge(common, {});
